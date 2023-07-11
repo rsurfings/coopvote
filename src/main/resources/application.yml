@@ -3,6 +3,11 @@ spring:
     mongodb:
       host: mongodb
       database: coopvote
+  kafka:
+    producer:
+      bootstrap-servers: kafka:9093
+    consumer:
+      bootstrap-servers: kafka:9092
 
 default:
   expiration:
