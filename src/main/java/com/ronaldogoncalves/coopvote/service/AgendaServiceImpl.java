@@ -48,6 +48,10 @@ public class AgendaServiceImpl implements AgendaService {
     }
 
     private AgendaResponseDto mapAgendaToResponseDto(Agenda agenda) {
-        return new AgendaResponseDto(agenda.getId().toHexString(), agenda.getName());
+        AgendaResponseDto agendaResponseDto = new AgendaResponseDto();
+        agendaResponseDto.setId(agenda.getId().toHexString());
+        agendaResponseDto.setName(agenda.getName());
+
+        return agendaResponseDto;
     }
 }

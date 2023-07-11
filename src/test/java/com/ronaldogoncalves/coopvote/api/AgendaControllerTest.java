@@ -50,7 +50,10 @@ public class AgendaControllerTest {
     public void shouldReturnAgendas() {
         // Arrange
         List<AgendaResponseDto> agendaList = new ArrayList<>();
-        agendaList.add(new AgendaResponseDto("1", AGENDA_NAME));
+        AgendaResponseDto agendaResponseDto = new AgendaResponseDto();
+        agendaResponseDto.setId("1");
+        agendaResponseDto.setName(AGENDA_NAME);
+        agendaList.add(agendaResponseDto);
         ResponseEntity<List<AgendaResponseDto>> expectedResponse = ResponseEntity.ok(agendaList);
         when(agendaService.getAllAgendas()).thenReturn(agendaList);
 
@@ -63,12 +66,15 @@ public class AgendaControllerTest {
         assertEquals(expectedResponse.getBody(), response.getBody());
     }
 
+
     @Test
     public void shouldCreateAgenda() throws URISyntaxException {
         // Arrange
         String agendaName = AGENDA_NAME;
         AgendaRequestDto requestDto = new AgendaRequestDto(agendaName);
-        AgendaResponseDto responseDto = new AgendaResponseDto(new ObjectId().toHexString(), agendaName);
+        AgendaResponseDto responseDto = new AgendaResponseDto();
+        responseDto.setId(new ObjectId().toHexString());
+        responseDto.setName(agendaName);
         ResponseEntity<AgendaResponseDto> expectedResponse = ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         when(agendaService.createAgenda(requestDto)).thenReturn(responseDto);
 

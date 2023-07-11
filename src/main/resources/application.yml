@@ -3,3 +3,7 @@ spring:
     mongodb:
       host: mongodb
       database: coopvote
+
+default:
+  expiration:
+    minutes: 1

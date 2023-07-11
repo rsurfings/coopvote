@@ -3,10 +3,9 @@ package com.ronaldogoncalves.coopvote.dto;
 
 public class AgendaResponseDto {
     private String id;
-    private final String name;
+    private String name;
 
-    public AgendaResponseDto(String id, String name) {
-        this.id = id;
+    public void setName(String name) {
         this.name = name;
     }
 
