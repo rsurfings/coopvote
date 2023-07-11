@@ -6,7 +6,10 @@ services:
     ports:
       - "27017:27017"
   app:
-    build:
-      context: .
+    image: ronaldogoncalves/coopvote
     ports:
       - "8080:8080"
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
