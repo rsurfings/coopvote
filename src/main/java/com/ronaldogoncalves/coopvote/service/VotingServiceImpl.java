@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,17 +26,19 @@ public class VotingServiceImpl implements VotingService {
     private final AgendaRepository agendaRepository;
     private final ModelMapper modelMapper;
     private final CpfService cpfService;
+    private final MessagingService messagingService;
 
     @Autowired
     public VotingServiceImpl(@Value("{$default.expiration.minutes}") String minutesToExpiration,
                              VotingRepository votingRepository, ModelMapper modelMapper,
                              AgendaRepository agendaRepository,
-                             CpfService cpfService) {
+                             CpfService cpfService, MessagingService messagingService) {
         this.minutesToExpiration = minutesToExpiration;
         this.votingRepository = votingRepository;
         this.agendaRepository = agendaRepository;
         this.modelMapper = modelMapper;
         this.cpfService = cpfService;
+        this.messagingService = messagingService;
     }
 
     @Override
@@ -93,7 +96,6 @@ public class VotingServiceImpl implements VotingService {
         Answer answer = voteRequestDto.getAnswer();
         return new Vote(cpf, answer);
     }
-
 
     @Override
     public VotingResultResponseDto getVotingResult(String id) {
@@ -153,5 +155,23 @@ public class VotingServiceImpl implements VotingService {
 
     private AgendaResponseDto mapAgendaToResponseDto(Agenda agenda) {
         return modelMapper.map(agenda, AgendaResponseDto.class);
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    private void closeExpiredVotingAndBroadcastResult() throws InterruptedException  {
+        List<Voting> expiredVotingList = findExpiredVoting();
+        expiredVotingList.forEach(voting -> {
+            VotingResultResponseDto votingResult = getVotingResult(voting.getId().toHexString());
+            messagingService.send(votingResult);
+            voting.setClosed(true);
+            votingRepository.save(voting);
+        });
+    }
+
+    private List<Voting> findExpiredVoting() {
+        return votingRepository.findAll().stream()
+                .filter(Voting::isExpired)
+                .filter(voting -> !voting.isClosed())
+                .collect(Collectors.toList());
     }
 }
