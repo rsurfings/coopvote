@@ -7,6 +7,7 @@ import com.ronaldogoncalves.coopvote.entity.Vote;
 import com.ronaldogoncalves.coopvote.entity.Voting;
 import com.ronaldogoncalves.coopvote.exception.BusinessException;
 import com.ronaldogoncalves.coopvote.exception.NotFoundException;
+import com.ronaldogoncalves.coopvote.integration.CpfService;
 import com.ronaldogoncalves.coopvote.repository.AgendaRepository;
 import com.ronaldogoncalves.coopvote.repository.VotingRepository;
 import org.bson.types.ObjectId;
@@ -48,6 +49,9 @@ public class VotingServiceTest {
 
     @InjectMocks
     private VotingServiceImpl votingService;
+
+    @Mock
+    private CpfService cpfService;
 
     @BeforeEach
     public void setup() {
@@ -116,6 +120,7 @@ public class VotingServiceTest {
 
         Voting voting = new Voting(agenda, MINUTES_TO_EXPIRATION);
         Mockito.when(votingRepository.findById(id)).thenReturn(Optional.of(voting));
+        Mockito.when(cpfService.isAbleToVote(CPF)).thenReturn(true);
 
         Voting voting2 = new Voting(agenda, MINUTES_TO_EXPIRATION);
         voting2.setId(id);

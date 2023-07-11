@@ -7,3 +7,8 @@ spring:
 default:
   expiration:
     minutes: 1
+
+external:
+  service:
+    cpf:
+      url: https://user-info.herokuapp.com/users/

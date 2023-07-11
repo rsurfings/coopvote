@@ -4,6 +4,7 @@ import com.ronaldogoncalves.coopvote.dto.*;
 import com.ronaldogoncalves.coopvote.entity.*;
 import com.ronaldogoncalves.coopvote.exception.BusinessException;
 import com.ronaldogoncalves.coopvote.exception.NotFoundException;
+import com.ronaldogoncalves.coopvote.integration.CpfService;
 import com.ronaldogoncalves.coopvote.repository.AgendaRepository;
 import com.ronaldogoncalves.coopvote.repository.VotingRepository;
 import org.bson.types.ObjectId;
@@ -23,15 +24,18 @@ public class VotingServiceImpl implements VotingService {
     private final VotingRepository votingRepository;
     private final AgendaRepository agendaRepository;
     private final ModelMapper modelMapper;
+    private final CpfService cpfService;
 
     @Autowired
     public VotingServiceImpl(@Value("{$default.expiration.minutes}") String minutesToExpiration,
                              VotingRepository votingRepository, ModelMapper modelMapper,
-                             AgendaRepository agendaRepository) {
+                             AgendaRepository agendaRepository,
+                             CpfService cpfService) {
         this.minutesToExpiration = minutesToExpiration;
         this.votingRepository = votingRepository;
         this.agendaRepository = agendaRepository;
         this.modelMapper = modelMapper;
+        this.cpfService = cpfService;
     }
 
     @Override
@@ -132,6 +136,9 @@ public class VotingServiceImpl implements VotingService {
             throw new BusinessException("The associate with CPF (" + cpf + ") has already voted.");
         }
 
+        if (!cpfService.isAbleToVote(cpf)) {
+            throw new BusinessException("CPF is not eligible to vote.");
+        }
     }
 
     private long countVotesByAnswer(List<Vote> votes, Answer answer) {
