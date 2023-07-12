@@ -8,6 +8,12 @@ spring:
       bootstrap-servers: kafka:9093
     consumer:
       bootstrap-servers: kafka:9092
+      group-id: voting-result-consumer-group
+
+voting:
+  result:
+    kafka:
+      topic: voting-result
 
 default:
   expiration:
