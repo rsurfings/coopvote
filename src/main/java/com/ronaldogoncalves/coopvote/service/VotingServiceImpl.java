@@ -57,6 +57,15 @@ public class VotingServiceImpl implements VotingService {
     }
 
     @Override
+    public List<VotingResponseDto> getVotingByAgendaId(String id) {
+        List<Voting> votingList = votingRepository.findByAgendaId(new ObjectId(id));
+
+        return votingList.stream()
+                .map(this::mapVotingToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public VotingResponseDto createVoting(VotingRequestDto votingRequestDto) {
         Agenda agenda = findAgendaById(votingRequestDto.getAgendaId());
         int minutesToExpiration = getMinutesToExpiration(votingRequestDto);

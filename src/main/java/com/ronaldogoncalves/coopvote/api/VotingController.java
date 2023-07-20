@@ -35,6 +35,12 @@ public class VotingController {
         return ResponseEntity.ok(votingService.getVotingById(id));
     }
 
+    @Operation(summary = "Get all votes by agenda id")
+    @GetMapping("/agenda/{id}")
+    public ResponseEntity<List<VotingResponseDto>> getAllVotingsByAgendaId(@PathVariable String id) {
+        return ResponseEntity.ok(votingService.getVotingByAgendaId(id));
+    }
+
     @Operation(summary = "Create voting")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()

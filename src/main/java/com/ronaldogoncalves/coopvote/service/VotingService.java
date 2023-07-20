@@ -14,4 +14,6 @@ public interface VotingService {
     VoteResponseDto createVote(VoteRequestDto voteRequestDto);
 
     VotingResultResponseDto getVotingResult(String id);
+
+    List<VotingResponseDto> getVotingByAgendaId(String id);
 }
